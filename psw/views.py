@@ -1,18 +1,38 @@
 """
 Definition of views.
 """
+import paramiko
 
 from django.shortcuts import render
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.template import RequestContext
 from datetime import datetime
 from psw.forms import pswCreateForm, CommandForm, pswAuthenticationForm, ServicesForm
-import paramiko
 from subprocess import call
 from psw.models import Commands, Services
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from django import forms
+
+def ip_adding():
+    ip_tuple = Commands.objects.values_list('ip')
+    ip_list = [x[0] for x in ip_tuple]
+    ip_start = ['192.168.0.','10']
+    ip_join = ip_start[0] + ip_start[1]
+    
+
+    for item in ip_list:
+        if item == ip_join:
+            a = int(ip_start[1])+1
+            ip_start[1] = str(a)
+            ip_join = ip_start[0] + ip_start[1]
+            
+        else:
+            ip_join
+    return ip_join
+        
+        
+
 
 def home(request):
     """Renders the home page."""
@@ -84,13 +104,16 @@ def servers(request):
         
         if form.is_valid():
             form.instance.user = request.user
-            ip = form.cleaned_data['ip']
+            ip = ip_adding()
+            form.instance.ip = ip
+            name = form.cleaned_data['name']
+            #ip = form.cleaned_data['ip']
             system = form.cleaned_data['system']
             ram = form.cleaned_data['ram']
             quote = form.cleaned_data['quote']
             username = str(request.user.get_username())
-            #commandlog = 'python3.5 /root/log_skrypt.py'+ ' '+ ip + ' ' + system + ' ' + ram + ' ' + quote +  ' ' + username + ' >> PSW_log.log'
-            #command = 'python3.5 /root/main_skrypt.py'+ ' '+ ip + ' ' + system + ' ' + ram + ' ' + quote + ' ' + username + '  > wyniki_testy.txt'
+            #commandlog = 'python3.5 /root/log_skrypt.py'+ ' '+ ip + ' ' + system + ' ' + ram + ' ' + quote +  ' ' + username + name + ' >> PSW_log.log'
+            #command = 'python3.5 /root/main_skrypt.py'+ ' '+ ip + ' ' + system + ' ' + ram + ' ' + quote + ' ' + username + name +'  > wyniki_testy.txt'
             form.save()
 
             #Tworzenie ze skryptu.py Python 3.5 

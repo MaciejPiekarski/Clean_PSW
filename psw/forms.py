@@ -67,7 +67,7 @@ class CommandForm(forms.ModelForm):
     SYSTEM_CHOICES = (('Ubuntu','Ubuntu'),('Debian','Debian'))
     RAM_CHOICES = (('64','64'),('128','128'),('256','256'))
     QUOTE_CHOICES = (('5','5'),('10','10'),('15','15'))
-    ip = forms.ChoiceField(widget=forms.Select(attrs={'class': 'form-control'}),choices=IP_CHOICES)
+    #ip = forms.ChoiceField(widget=forms.Select(attrs={'class': 'form-control'}),choices=IP_CHOICES)
     system = forms.ChoiceField(widget=forms.Select(attrs={'class': 'form-control'}),choices=SYSTEM_CHOICES)
     ram = forms.ChoiceField(widget=forms.Select(attrs={'class': 'form-control'}),choices=RAM_CHOICES)
     quote = forms.ChoiceField(widget=forms.Select(attrs={'class': 'form-control'}),choices=QUOTE_CHOICES)
@@ -75,7 +75,7 @@ class CommandForm(forms.ModelForm):
 
     class Meta:
         model = Commands
-        fields = ('ip','system','ram','quote','name')
+        fields = ('system','ram','quote','name')
 
 
 

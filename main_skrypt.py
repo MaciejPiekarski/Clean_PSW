@@ -8,7 +8,7 @@ system = sys.argv[2]
 ram = sys.argv[3]
 quote = sys.argv[4]
 
-user = 'ktos'
+user = sys.argv[5]
 '''system = 'Ubuntu'
 ram = '128'
 quote = '2'''
