@@ -116,8 +116,13 @@ def servers(request):
             ram = form.cleaned_data['ram']
             quote = form.cleaned_data['quote']
             username = str(request.user.get_username())
+<<<<<<< HEAD
             commandlog = 'python3.5 /root/log_skrypt.py'+ ' '+ ip + ' ' + system + ' ' + ram + ' ' + quote +  ' ' + username + ' ' + name + ' >> PSW_log.log'
             command = 'python3.5 /root/main_skrypt_podip.py'+ ' '+ ip + ' ' + system + ' ' + ram + ' ' + quote + ' ' + username + ' ' + name +'  > wyniki_testy.txt'
+=======
+            # commandlog = 'python3.5 /root/log_skrypt.py'+ ' '+ ip + ' ' + system + ' ' + ram + ' ' + quote +  ' ' + username + name + ' >> PSW_log.log'
+            # command = 'python3.5 /root/main_skrypt.py'+ ' '+ ip + ' ' + system + ' ' + ram + ' ' + quote + ' ' + username + name +'  > wyniki_testy.txt'
+>>>>>>> MaciejPiekarski/master
             form.save()
 
             # Tworzenie ze skryptu.py Python 3.5
@@ -126,12 +131,21 @@ def servers(request):
                 ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
                 ssh.connect('89.206.7.46', username='root', password='TrudneHaslo123')
                 # Tworzenie Log
+<<<<<<< HEAD
                 stdin, stdout, stderr = ssh.exec_command(commandlog)
                 # Tworzenie kontenerow
                 stdin, stdout, stderr = ssh.exec_command(command)
                 ssh.close()
             except paramiko.ssh_exception.NoValidConnectionsError as e:
                 print('Error %s' %e)
+=======
+                # stdin, stdout, stderr = ssh.exec_command(commandlog)
+                # Tworzenie kontenerow
+                # stdin, stdout, stderr = ssh.exec_command(command)
+                ssh.close()
+            except paramiko.ssh_exception.NoValidConnectionsError as e:
+                print('Error %s' % e)
+>>>>>>> MaciejPiekarski/master
                 return HttpResponseRedirect('servers/')
             return HttpResponseRedirect('/')
     else:
@@ -151,7 +165,10 @@ def services(request):
         form = ServicesForm(request.POST, user=request.user)
 
         if form.is_valid():
+<<<<<<< HEAD
             name = str(form.cleaned_data['contener'])
+=======
+>>>>>>> MaciejPiekarski/master
             sql = form.cleaned_data['sql']
             http = form.cleaned_data['http']
             php = form.cleaned_data['php']
