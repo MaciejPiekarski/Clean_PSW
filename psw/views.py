@@ -93,6 +93,7 @@ def login_view(request):
         if user is not None:
             if user.is_active:
                 login(request, user)
+                return HttpResponseRedirect('/')
             else:
                 return HttpResponse('Nie poszło - nieaktywny')
         else:
