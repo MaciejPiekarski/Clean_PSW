@@ -5,14 +5,10 @@ Definition of views.
 import paramiko
 from django.shortcuts import render
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
-from django.template import RequestContext
-from datetime import datetime
 from psw.forms import pswCreateForm, CommandForm, pswAuthenticationForm, ServicesForm
-from subprocess import call
 from psw.models import Commands, Services
-from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
-from django import forms
+
 
 
 def ip_adding():
@@ -26,54 +22,8 @@ def ip_adding():
             a = int(ip_start[1]) + 1
             ip_start[1] = str(a)
             ip_join = ip_start[0] + ip_start[1]
-
-        else:
-            ip_join
     return ip_join
 
-
-def home(request):
-    """Renders the home page."""
-    assert isinstance(request, HttpRequest)
-    return render(
-        request,
-        'psw/index.html',
-        context_instance=RequestContext(request,
-                                        {
-                                            'title': 'Home Page',
-                                            'year': datetime.now().year,
-                                        })
-    )
-
-
-def contact(request):
-    """Renders the contact page."""
-    assert isinstance(request, HttpRequest)
-    return render(
-        request,
-        'psw/contact.html',
-        context_instance=RequestContext(request,
-                                        {
-                                            'title': 'Contact',
-                                            'message': 'Your contact page.',
-                                            'year': datetime.now().year,
-                                        })
-    )
-
-
-def about(request):
-    """Renders the about page."""
-    assert isinstance(request, HttpRequest)
-    return render(
-        request,
-        'psw/about.html',
-        context_instance=RequestContext(request,
-                                        {
-                                            'title': 'About',
-                                            'message': 'Your application description page.',
-                                            'year': datetime.now().year,
-                                        })
-    )
 
 
 def register(request):
@@ -111,14 +61,15 @@ def servers(request):
             ip = ip_adding()
             form.instance.ip = ip
             name = form.cleaned_data['name']
-            # ip = form.cleaned_data['ip']
             system = form.cleaned_data['system']
             ram = form.cleaned_data['ram']
             quote = form.cleaned_data['quote']
             password1 = form.cleaned_data['password1']
             username = str(request.user.get_username())
-            commandlog = 'python3.5 /root/log_skrypt.py'+ ' '+ ip + ' ' + system + ' ' + ram + ' ' + quote +  ' ' + username + ' ' + name + ' ' + password1 +' >> PSW_log.log'
-            #command = 'python3.5 /root/main_skrypt_podip.py'+ ' '+ ip + ' ' + system + ' ' + ram + ' ' + quote + ' ' + username + ' ' + name +'  > wyniki_testy.txt'
+            commandlog = 'python3.5 /root/log_skrypt.py'+ ' '+ ip + ' ' + system + ' ' + ram + ' ' + quote +  ' ' + username + ' ' + name + ' >> PSW_log.log'
+            command = 'python3.5 /root/main_skrypt_podip.py'+ ' '+ ip + ' ' + system + ' ' + ram + ' ' + quote + ' ' + username + ' ' + name +'  > wyniki_testy.txt'
+            command = 'python3.5 /root/main_skrypt.py' + ' ' + ip + ' ' + system + ' ' + ram + ' ' + quote + \
+                      ' ' + username + ' ' + name + '  > wyniki_testy.txt'
             form.save()
 
             # Tworzenie ze skryptu.py Python 3.5
@@ -186,7 +137,6 @@ def services(request):
                 print ('Error %s' %e)
                 return HttpResponseRedirect('servers/')
             return HttpResponseRedirect('services/')
-
     else:
         form = ServicesForm()
     return render(request, 'psw/services.html', {'form': form})
