@@ -115,9 +115,10 @@ def servers(request):
             system = form.cleaned_data['system']
             ram = form.cleaned_data['ram']
             quote = form.cleaned_data['quote']
+            password1 = form.cleaned_data['password1']
             username = str(request.user.get_username())
-            commandlog = 'python3.5 /root/log_skrypt.py'+ ' '+ ip + ' ' + system + ' ' + ram + ' ' + quote +  ' ' + username + ' ' + name + ' >> PSW_log.log'
-            command = 'python3.5 /root/main_skrypt_podip.py'+ ' '+ ip + ' ' + system + ' ' + ram + ' ' + quote + ' ' + username + ' ' + name +'  > wyniki_testy.txt'
+            commandlog = 'python3.5 /root/log_skrypt.py'+ ' '+ ip + ' ' + system + ' ' + ram + ' ' + quote +  ' ' + username + ' ' + name + ' ' + password1 +' >> PSW_log.log'
+            #command = 'python3.5 /root/main_skrypt_podip.py'+ ' '+ ip + ' ' + system + ' ' + ram + ' ' + quote + ' ' + username + ' ' + name +'  > wyniki_testy.txt'
             form.save()
 
             # Tworzenie ze skryptu.py Python 3.5
@@ -128,7 +129,7 @@ def servers(request):
                 # Tworzenie Log
                 stdin, stdout, stderr = ssh.exec_command(commandlog)
                 # Tworzenie kontenerow
-                stdin, stdout, stderr = ssh.exec_command(command)
+                #stdin, stdout, stderr = ssh.exec_command(command)
                 ssh.close()
             except paramiko.ssh_exception.NoValidConnectionsError as e:
                 print('Error %s' %e)
@@ -141,28 +142,45 @@ def servers(request):
 
 def listservers(request):
     servers = Commands.objects.filter(user=request.user)
+<<<<<<< HEAD
     context_dict = {'servers': servers}
     return render(request, 'psw/listservers.html', context_dict)
 
+=======
+    #services = Services.objects.filter(contener__user=request.user)
+
+    dict = {'servers': servers}
+
+    return render(request, 'psw/listservers.html' , dict)
+>>>>>>> 991e3144c343a17953d04fa704580d971ae54cfa
 
 def services(request):
     if request.method == 'POST':
+<<<<<<< HEAD
         qs = Commands.objects.filter(user=request.user)
         form = ServicesForm(request.POST, user=request.user)
 
+=======
+        form = ServicesForm(request.POST,user=request.user)
+        
+>>>>>>> 991e3144c343a17953d04fa704580d971ae54cfa
         if form.is_valid():
             name = str(form.cleaned_data['contener'])
             sql = form.cleaned_data['sql']
             http = form.cleaned_data['http']
             php = form.cleaned_data['php']
             com_services = 'python3.5 /root/services_skrypt.py'+ ' '+ name + ' ' + sql + ' ' + http + ' ' + php +'  > wyniki_services.txt'
-            form.save()
+            new_service = form.save()
+            query = Commands.objects.get(name=name)
+            idl = new_service.pk
+            query.services_id = idl
+            query.save()
             try:
                 ssh = paramiko.SSHClient()
                 ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
                 ssh.connect('89.206.7.46', username='root', password='TrudneHaslo123')
                 # Tworzenie serwisów
-                stdin, stdout, stderr = ssh.exec_command(com_services)
+                #stdin, stdout, stderr = ssh.exec_command(com_services)
                 ssh.close()
             except paramiko.ssh_exception.NoValidConnectionsError as e:
                 print ('Error %s' %e)

@@ -7,30 +7,40 @@
 
 <div class="hero-unit">
 
+<<<<<<< HEAD
  <h2>Serwery użytkownika - {{ user.username }}</h2>
 {% for entry in servers %}
 <table>
 <tr>
 <td> Nazwa : {{ entry.name }} </td> 
 </tr>	
+=======
+ <h2>Serwery  </h2>
+<table class="table" >
+>>>>>>> 991e3144c343a17953d04fa704580d971ae54cfa
 <tr>
-<td> Adres IP : {{ entry.ip }} </td> 
+    <td>Nazwa</td>
+    <td>Adres IP</td>
+    <td>System operacyjny</td>
+    <td>Ilość pamięci RAM</td>
+    <td>Przestrzeń dyskowa</td>
+    <td>Baza SQL </td>
+    <td>Wersja PHP</td>
+    <td>Serwer WWW</td>
+</tr>
+{% for entry in servers %}
+<tr>
+<td> {{ entry.name }} </td>
+<td> {{ entry.ip }} </td>
+<td> {{ entry.system }} </td>
+<td> {{ entry.ram }} MB </td>
+<td> {{ entry.quote}} GB </td>
+<td> {{ entry.services.sql }}</td>
+<td> {{ entry.services.php }}</td>
+<td> {{ entry.services.http }}</td>
 </tr>
 
-<tr>
-<td> System operacyjny : {{ entry.system }} </td>
-</tr>
-
-<tr>
-<td> Ilość pamięci RAM : {{ entry.ram }} MB </td> 
-</tr>
-
-
-<tr>
-<td> Przestrzeń dyskowa : {{ entry.quote}} GB </td> 
-</tr>
-
+{% endfor  %}
 </table>
 </div>
-{% endfor  %}
 {% endblock %}

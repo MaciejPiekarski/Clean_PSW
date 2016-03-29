@@ -75,10 +75,11 @@ class CommandForm(forms.ModelForm):
     ram = forms.ChoiceField(widget=forms.Select(attrs={'class': 'form-control'}),choices=RAM_CHOICES)
     quote = forms.ChoiceField(widget=forms.Select(attrs={'class': 'form-control'}),choices=QUOTE_CHOICES)
     name = forms.CharField(max_length=8, widget=forms.TextInput({'class': 'form-control'}))
+    password1 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
 
     class Meta:
         model = Commands
-        fields = ('system','ram','quote','name')
+        fields = ('system','ram','quote','name','password1')
 
 
 class ServicesForm(forms.ModelForm):
@@ -90,6 +91,7 @@ class ServicesForm(forms.ModelForm):
     sql = forms.ChoiceField(widget=forms.Select(attrs={'class': 'form-control'}),choices=SQL_CHOICES)
     http = forms.ChoiceField(widget=forms.Select(attrs={'class': 'form-control'}),choices=HTTP_CHOICES)
     php = forms.ChoiceField(widget=forms.Select(attrs={'class': 'form-control'}),choices=PHP_CHOICES)
+
     class Meta:
         model = Services
         fields = ('contener','sql','http','php')
@@ -100,8 +102,8 @@ class ServicesForm(forms.ModelForm):
         super(ServicesForm, self).__init__(*args, **kwargs)
         qs = Commands.objects.filter(user=user)
         self.fields['contener'].initial = qs
-        self.fields['contener'].queryset = qs     
-      
-    
-        
+        self.fields['contener'].queryset = qs
+
+
+
            
