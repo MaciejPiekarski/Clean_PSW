@@ -5,10 +5,14 @@ Definition of views.
 import paramiko
 from django.shortcuts import render
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.template import RequestContext
+from datetime import datetime
 from psw.forms import pswCreateForm, CommandForm, pswAuthenticationForm, ServicesForm
+from subprocess import call
 from psw.models import Commands, Services
+from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
-
+from django import forms
 
 
 def ip_adding():
@@ -22,8 +26,54 @@ def ip_adding():
             a = int(ip_start[1]) + 1
             ip_start[1] = str(a)
             ip_join = ip_start[0] + ip_start[1]
+
+        else:
+            ip_join
     return ip_join
 
+
+def home(request):
+    """Renders the home page."""
+    assert isinstance(request, HttpRequest)
+    return render(
+        request,
+        'psw/index.html',
+        context_instance=RequestContext(request,
+                                        {
+                                            'title': 'Home Page',
+                                            'year': datetime.now().year,
+                                        })
+    )
+
+
+def contact(request):
+    """Renders the contact page."""
+    assert isinstance(request, HttpRequest)
+    return render(
+        request,
+        'psw/contact.html',
+        context_instance=RequestContext(request,
+                                        {
+                                            'title': 'Contact',
+                                            'message': 'Your contact page.',
+                                            'year': datetime.now().year,
+                                        })
+    )
+
+
+def about(request):
+    """Renders the about page."""
+    assert isinstance(request, HttpRequest)
+    return render(
+        request,
+        'psw/about.html',
+        context_instance=RequestContext(request,
+                                        {
+                                            'title': 'About',
+                                            'message': 'Your application description page.',
+                                            'year': datetime.now().year,
+                                        })
+    )
 
 
 def register(request):
@@ -61,14 +111,18 @@ def servers(request):
             ip = ip_adding()
             form.instance.ip = ip
             name = form.cleaned_data['name']
+            # ip = form.cleaned_data['ip']
             system = form.cleaned_data['system']
             ram = form.cleaned_data['ram']
             quote = form.cleaned_data['quote']
             username = str(request.user.get_username())
-            commandlog = 'python3.5 /root/log_skrypt.py'+ ' '+ ip + ' ' + system + ' ' + ram + ' ' + quote + \
-                         ' ' + username + ' ' + name + ' >> PSW_log.log'
-            command = 'python3.5 /root/main_skrypt.py' + ' ' + ip + ' ' + system + ' ' + ram + ' ' + quote + \
-                      ' ' + username + ' ' + name + '  > wyniki_testy.txt'
+<<<<<<< HEAD
+            commandlog = 'python3.5 /root/log_skrypt.py'+ ' '+ ip + ' ' + system + ' ' + ram + ' ' + quote +  ' ' + username + ' ' + name + ' >> PSW_log.log'
+            command = 'python3.5 /root/main_skrypt_podip.py'+ ' '+ ip + ' ' + system + ' ' + ram + ' ' + quote + ' ' + username + ' ' + name +'  > wyniki_testy.txt'
+=======
+            # commandlog = 'python3.5 /root/log_skrypt.py'+ ' '+ ip + ' ' + system + ' ' + ram + ' ' + quote +  ' ' + username + name + ' >> PSW_log.log'
+            # command = 'python3.5 /root/main_skrypt.py'+ ' '+ ip + ' ' + system + ' ' + ram + ' ' + quote + ' ' + username + name +'  > wyniki_testy.txt'
+>>>>>>> MaciejPiekarski/master
             form.save()
 
             # Tworzenie ze skryptu.py Python 3.5
@@ -77,12 +131,21 @@ def servers(request):
                 ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
                 ssh.connect('89.206.7.46', username='root', password='TrudneHaslo123')
                 # Tworzenie Log
+<<<<<<< HEAD
                 stdin, stdout, stderr = ssh.exec_command(commandlog)
                 # Tworzenie kontenerow
                 stdin, stdout, stderr = ssh.exec_command(command)
                 ssh.close()
             except paramiko.ssh_exception.NoValidConnectionsError as e:
                 print('Error %s' %e)
+=======
+                # stdin, stdout, stderr = ssh.exec_command(commandlog)
+                # Tworzenie kontenerow
+                # stdin, stdout, stderr = ssh.exec_command(command)
+                ssh.close()
+            except paramiko.ssh_exception.NoValidConnectionsError as e:
+                print('Error %s' % e)
+>>>>>>> MaciejPiekarski/master
                 return HttpResponseRedirect('servers/')
             return HttpResponseRedirect('/')
     else:
@@ -102,7 +165,10 @@ def services(request):
         form = ServicesForm(request.POST, user=request.user)
 
         if form.is_valid():
+<<<<<<< HEAD
             name = str(form.cleaned_data['contener'])
+=======
+>>>>>>> MaciejPiekarski/master
             sql = form.cleaned_data['sql']
             http = form.cleaned_data['http']
             php = form.cleaned_data['php']
@@ -119,6 +185,7 @@ def services(request):
                 print ('Error %s' %e)
                 return HttpResponseRedirect('servers/')
             return HttpResponseRedirect('services/')
+
     else:
         form = ServicesForm()
     return render(request, 'psw/services.html', {'form': form})
