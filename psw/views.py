@@ -3,28 +3,78 @@ Definition of views.
 """
 # -*- coding: utf-8 -*-
 import paramiko
+
 from django.shortcuts import render
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.template import RequestContext
+from datetime import datetime
 from psw.forms import pswCreateForm, CommandForm, pswAuthenticationForm, ServicesForm
+from subprocess import call
 from psw.models import Commands, Services
+from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
-
-
+from django import forms
 
 def ip_adding():
     ip_tuple = Commands.objects.values_list('ip')
     ip_list = [x[0] for x in ip_tuple]
-    ip_start = ['192.168.0.', '10']
+    ip_start = ['192.168.0.','10']
     ip_join = ip_start[0] + ip_start[1]
+    
 
     for item in ip_list:
         if item == ip_join:
-            a = int(ip_start[1]) + 1
+            a = int(ip_start[1])+1
             ip_start[1] = str(a)
             ip_join = ip_start[0] + ip_start[1]
+            
+        else:
+            ip_join
     return ip_join
+        
+        
 
 
+def home(request):
+    """Renders the home page."""
+    assert isinstance(request, HttpRequest)
+    return render(
+        request,
+        'psw/index.html',
+        context_instance = RequestContext(request,
+        {
+            'title':'Home Page',
+            'year':datetime.now().year,
+        })
+    )
+
+def contact(request):
+    """Renders the contact page."""
+    assert isinstance(request, HttpRequest)
+    return render(
+        request,
+        'psw/contact.html',
+        context_instance = RequestContext(request,
+        {
+            'title':'Contact',
+            'message':'Your contact page.',
+            'year':datetime.now().year,
+        })
+    )
+
+def about(request):
+    """Renders the about page."""
+    assert isinstance(request, HttpRequest)
+    return render(
+        request,
+        'psw/about.html',
+        context_instance = RequestContext(request,
+        {
+            'title':'About',
+            'message':'Your application description page.',
+            'year':datetime.now().year,
+        })
+    )
 
 def register(request):
     if request.method == 'POST':
@@ -35,7 +85,6 @@ def register(request):
     form = pswCreateForm()
     return render(request, 'psw/register.html', {'form': form})
 
-
 def login_view(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -44,13 +93,11 @@ def login_view(request):
         if user is not None:
             if user.is_active:
                 login(request, user)
-                return HttpResponseRedirect('/')
             else:
                 return HttpResponse('Nie poszło - nieaktywny')
         else:
             return HttpResponse('Nie poszło - złe dane')
     return render(request, 'psw/login.html', {'form': pswAuthenticationForm(request.POST)})
-
 
 def servers(request):
     if request.method == 'POST':
@@ -61,18 +108,17 @@ def servers(request):
             ip = ip_adding()
             form.instance.ip = ip
             name = form.cleaned_data['name']
+            #ip = form.cleaned_data['ip']
             system = form.cleaned_data['system']
             ram = form.cleaned_data['ram']
             quote = form.cleaned_data['quote']
             password1 = form.cleaned_data['password1']
             username = str(request.user.get_username())
-            commandlog = 'python3.5 /root/log_skrypt.py'+ ' '+ ip + ' ' + system + ' ' + ram + ' ' + quote +  ' ' + username + ' ' + name + ' >> PSW_log.log'
-            command = 'python3.5 /root/main_skrypt_podip.py'+ ' '+ ip + ' ' + system + ' ' + ram + ' ' + quote + ' ' + username + ' ' + name +'  > wyniki_testy.txt'
-            command = 'python3.5 /root/main_skrypt.py' + ' ' + ip + ' ' + system + ' ' + ram + ' ' + quote + \
-                      ' ' + username + ' ' + name + '  > wyniki_testy.txt'
+            commandlog = 'python3.5 /root/log_skrypt.py'+ ' '+ ip + ' ' + system + ' ' + ram + ' ' + quote +  ' ' + username + ' ' + name + ' ' + password1 +' >> PSW_log.log'
+            #command = 'python3.5 /root/main_skrypt_podip.py'+ ' '+ ip + ' ' + system + ' ' + ram + ' ' + quote + ' ' + username + ' ' + name +'  > wyniki_testy.txt'
             form.save()
 
-            # Tworzenie ze skryptu.py Python 3.5
+            #Tworzenie ze skryptu.py Python 3.5 
             try:
                 ssh = paramiko.SSHClient()
                 ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -87,34 +133,22 @@ def servers(request):
                 return HttpResponseRedirect('servers/')
             return HttpResponseRedirect('/')
     else:
-        form = CommandForm()
+         form = CommandForm()
     return render(request, 'psw/servers.html', {'form': form})
-
 
 def listservers(request):
     servers = Commands.objects.filter(user=request.user)
-<<<<<<< HEAD
-    context_dict = {'servers': servers}
-    return render(request, 'psw/listservers.html', context_dict)
-
-=======
     #services = Services.objects.filter(contener__user=request.user)
 
     dict = {'servers': servers}
 
     return render(request, 'psw/listservers.html' , dict)
->>>>>>> 991e3144c343a17953d04fa704580d971ae54cfa
 
 def services(request):
+    
     if request.method == 'POST':
-<<<<<<< HEAD
-        qs = Commands.objects.filter(user=request.user)
-        form = ServicesForm(request.POST, user=request.user)
-
-=======
         form = ServicesForm(request.POST,user=request.user)
         
->>>>>>> 991e3144c343a17953d04fa704580d971ae54cfa
         if form.is_valid():
             name = str(form.cleaned_data['contener'])
             sql = form.cleaned_data['sql']
@@ -137,6 +171,8 @@ def services(request):
                 print ('Error %s' %e)
                 return HttpResponseRedirect('servers/')
             return HttpResponseRedirect('services/')
+            
     else:
         form = ServicesForm()
     return render(request, 'psw/services.html', {'form': form})
+
