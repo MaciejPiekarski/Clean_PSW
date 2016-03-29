@@ -28,6 +28,12 @@
     <label for="{{ form.quote.id_for_label }}">Powierzchnia dyskowa (w GB):</label>
     {{ form.quote }}
 </div>
+<hr>
+<div class="form-group">
+    {{ form.password1.errors }}
+    <label for="{{ form.password1.id_for_label }}">Hasło do SQL:</label>
+    {{ form.password1 }}
+</div>
 <input type="submit" value="Zatwierdź" class="btn btn-primary"/>
 </form>
 {{ boldmessage }}
